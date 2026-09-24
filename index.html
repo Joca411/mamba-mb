@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  index.html
+  Jedina stranica sajta: MAMBA MB, frizersko kozmetički studio,
+  Miljakovac, Beograd. Cilj stranice: poziv na 062 595792.
+
+  SADRŽAJ
+  01. HEADER        Logo i dugme poziva, crna traka
+  02. HERO          Naslov, dugme za poziv, radno vreme, adresa
+  03. USLUGE        Cenovnik po grupama, crna sekcija
+  04. RECENZIJE     Tri citata klijenata, bez ocene
+  05. PRIGOVORI     Pitanja i odgovori (cene, zakazivanje, lokacija)
+  06. LOKACIJA      Adresa, radno vreme, poziv, navigacija, Instagram
+  07. POZIV TRAKA   Fiksna traka sa dugmetom na mobilnom
+
+  Stilovi: src/input.css -> assets/css/style.css (Tailwind build).
+  Tokeni (boje, fontovi, zaobljenje) i .btn-call su u src/input.css.
+  JS: assets/js/main.js (status "Otvoreno sada" u 02, pojavljivanje
+  pri skrolu u 03-06). Brojevi sekcija su isti u oba fajla.
+
+  TODO: sekcije se rade jedna po jedna, posle odobrenja prethodne.
+  TODO: JSON-LD (HairSalon/BeautySalon), canonical i og:image kad
+        se zna domen. Ime u šemi mora biti isto kao na Google profilu.
+  TODO: 404 stranica, radi se na kraju.
+  Preskočeno namerno: greška i uspeh forme (nema forme), pravni
+  minimum (nema forme, analitike ni ugrađenog sadržaja).
+  ============================================================
+-->
+<html lang="sr-Latn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MAMBA MB | Salon lepote Miljakovac, Beograd</title>
+  <meta name="description" content="Frizerski i kozmetički studio MAMBA MB u Miljakovcu: frizer, manikir, pedikir, masaže, tretmani lica i trepavice na jednom mestu. Pozovite 062 595792 i zakažite termin.">
+  <meta name="theme-color" content="#0b0a09">
+  <!-- PRIVREMENO: probna verzija za klijenta, sa stock fotografijama koje nisu salon MAMBA MB.
+       noindex da je Google ne prikaže u pretrazi. TODO: skinuti ovu liniju kad se zamene prave fotografije i sajt ide na domen. -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Preload samo za dva fonta koja se vide u prvom ekranu (naslov i tekst).
+       Ostale tezine i latin-ext se učitavaju kad zatrebaju. -->
+  <link rel="preload" href="assets/fonts/lora-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- RAZUMI: zašto se klasa "js" dodaje inline, pre učitavanja stilova sekcija? Bez nje, ko ima isključen JS ne bi video sekcije. -->
+  <script>document.documentElement.classList.add('js')</script>
+  <script src="assets/js/main.js" defer></script>
+</head>
+
+<!-- pb-24 na mobilnom: fiksna traka (07) je visoka oko 76px, bez ovoga
+     bi prekrila poslednji red sadržaja. Na md+ traka ne postoji. -->
+<body class="min-h-screen bg-cream pb-24 font-sans text-base text-ink antialiased md:pb-0">
+
+  <!-- Sprite ikonica: ikone su potrebne na više mesta (telefon: 01, 02, 03, 06, 07),
+       pa su definisane jednom i pozivaju se sa <use href="#i-phone">, <use href="#i-pin"> i <use href="#i-instagram">. -->
+  <svg class="hidden" aria-hidden="true">
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></symbol>
+  </svg>
+
+  <!-- ============================================
+       01. HEADER
+       Crna traka kao na logou. Dugme poziva u zaglavlju samo na md+, na
+       mobilnom ga zamenjuje fiksna traka (07).
+       ============================================ -->
+  <header class="bg-ink">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-8">
+      <a href="#top" class="flex cursor-pointer items-center gap-4 rounded-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne">
+        <!-- Logo sa prozirnom pozadinom (assets/img/logo.png/webp), napravljen od slike koju je klijent poslao (338x298 px).
+             Radi samo na tamnoj podlozi (zlatna slova). Visina 80px (h-20), izvor je 189px, dovoljno za 2x ekrane. Manje od toga se skript "Beauty concept" ne cita.
+             TODO: pravi logo u vektoru (SVG) čim ga klijent pošalje. -->
+        <img src="assets/img/logo.webp" alt="MAMBA MB, salon lepote, Beauty concept" width="221" height="189" class="h-20 w-auto" fetchpriority="high">
+        <span class="hidden text-sm text-champagne-muted sm:block">Frizersko kozmetički studio</span>
+      </a>
+      <!-- Dugme umesto broja: isti tekst kao svuda (jedno dugme, jedan cilj). Broj se vidi u hero-u.
+           Šampanj dugme jer je traka crna. Samo md+, na mobilnom to radi fiksna traka (07). -->
+      <a href="tel:+38162595792" class="btn-call hidden bg-champagne px-5 py-2.5 text-base text-ink hover:bg-cream focus-visible:outline-champagne md:inline-flex">
+        <svg class="h-5 w-5" aria-hidden="true"><use href="#i-phone"/></svg>
+        Pozovi i zakaži termin
+      </a>
+    </div>
+  </header>
+  <!-- /01. HEADER -->
+
+  <main id="top">
+
+    <!-- ============================================
+         02. HERO
+         Obara prepreku "ne znam šta tačno nude": naslov nabraja
+         usluge. Jedno dugme, isto kao u 03, 06 i 07.
+         ============================================ -->
+    <section class="mx-auto grid max-w-6xl gap-8 px-4 pb-12 pt-8 md:grid-cols-2 md:items-center md:gap-12 md:px-8 md:pb-20 md:pt-12">
+
+      <div>
+        <h1 class="font-display text-4xl font-semibold leading-tight text-ink md:text-5xl">
+          Frizer, manikir, pedikir i masaža na jednom mestu
+        </h1>
+        <p class="mt-4 max-w-md text-lg text-ink-soft">
+          Salon lepote u Miljakovcu. Radi se po dogovoru: pozovite i zakažite termin.
+        </p>
+
+        <!-- RAZUMI: zašto je href "tel:+38162595792" (međunarodni format), a na ekranu piše 062 595792? -->
+        <!-- Isti tekst dugmeta kroz ceo sajt. tel: link radi samo na telefonu,
+             na desktopu otvara aplikaciju za pozive ako je ima. -->
+        <a href="tel:+38162595792" class="btn-call mt-6 inline-flex">
+          <svg class="h-5 w-5" aria-hidden="true"><use href="#i-phone"/></svg>
+          Pozovi i zakaži termin
+        </a>
+        <p class="mt-3 text-sm text-ink-soft">Poziv na 062 595792.</p>
+
+        <!-- Status rada: popunjava assets/js/main.js, funkcija renderOpenStatus (02. HERO).
+             invisible + min-h-10 rezerviše mesto dok skripta ne upiše tekst, da se layout ne pomera.
+             Okvir u zlatnoj boji sa cenovnika, pozadina kao kartice, zaobljenje 8px kao svuda.
+             Bez JS-a ostaje nevidljiv, a radno vreme ispod svejedno stoji. -->
+        <p id="status-rada" class="invisible mt-8 inline-flex min-h-10 items-center gap-3 rounded-brand border border-gold bg-paper px-4 py-2 text-base font-semibold text-ink">
+          <span data-status-dot class="inline-block h-3 w-3 rounded-full bg-status-open ring-4 ring-status-open/25" aria-hidden="true"></span>
+          <span data-status-text>Radno vreme</span>
+        </p>
+
+        <!-- Radno vreme: potvrđeno sa Google profila (brief.md, druga runda, pitanje 8) -->
+        <dl class="mt-4 grid max-w-sm grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-base">
+          <dt class="text-ink-soft">Utorak – petak</dt>
+          <dd class="font-semibold">10:00 – 20:00</dd>
+          <dt class="text-ink-soft">Subota i nedelja</dt>
+          <dd class="font-semibold">10:00 – 16:00</dd>
+          <dt class="text-ink-soft">Ponedeljak</dt>
+          <dd class="font-semibold">ne radimo</dd>
+        </dl>
+
+        <!-- TODO: dugme "Otvori navigaciju" (Google Maps pretraga po adresi)
+             ide u sekciju lokacije, ne ovde. Proveriti pin pri pregledu. -->
+        <p class="mt-6 text-base text-ink-soft">Stanka Paunovića Veljka 78j, Miljakovac, Beograd</p>
+      </div>
+
+      <!-- PRIVREMENO, SVESNO ODSTUPANJE OD PRAVILA PROJEKTA ("placeholder je sivi blok, nikad stock").
+           Šta je urađeno: stock fotografija (Unsplash, autor Barney Goodman, Unsplash License) samo da se vidi
+           kako stranica izgleda sa slikom. Skinuta i self-hostovana, isečena 4:5, 800x1000 WebP.
+           Alternativa: siv blok sa natpisom, ili prave fotografije salona od klijenta.
+           Zašto je odbačena: vlasnik je tražio da vidi izgled. Slika NIJE salon MAMBA MB, pa ne sme na
+           živ sajt (lažan dokaz, prigovor "ne verujem"). alt tekst zato kaže šta slika jeste.
+           TODO: zameniti pravom fotografijom enterijera pre lansiranja, isti 4:5 okvir, WebP do 200 KB.
+           aspect-[4/5] rezerviše prostor da se layout ne pomera. fetchpriority: slika je LCP element. -->
+      <img src="assets/img/hero-stock.webp" alt="Privremena fotografija: salon sa ogledalima i frizerskim stolicama (nije salon MAMBA MB)" width="800" height="1000" class="aspect-[4/5] w-full rounded-brand object-cover" fetchpriority="high">
+
+    </section>
+    <!-- /02. HERO -->
+
+    <!-- ============================================
+         03. USLUGE
+         Obara prepreku "ne znam cene". Crna sekcija kao štampani cenovnik
+         salona (crna pozadina, zlatni naslovi). Cene su prepisane sa
+         cenovnika koji je klijent poslao, ništa nije dodato ni zaokruženo.
+         Grupe prate cenovnik, a poslednja kartica su usluge koje cenovnik
+         nema (brief.md, odluka 2026-09-24).
+         ============================================ -->
+    <section class="border-t border-cream-deep bg-ink" aria-labelledby="usluge-naslov">
+      <div data-reveal class="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
+
+        <h2 id="usluge-naslov" class="font-display text-3xl font-semibold text-champagne md:text-4xl">Usluge i cene</h2>
+
+        <!-- PRIVREMENO, SVESNO ODSTUPANJE OD PRAVILA PROJEKTA (stock fotografije), isto kao u hero-u (02).
+             Šta je urađeno: tri Unsplash fotografije (Unsplash License) da se vidi izgled stranice sa slikama:
+             Chelson Tamares (nokti), Katherine Hanlon (masaža lica), Adam Winger (frizer). Self-hostovane, 4:3, WebP.
+             Alternativa: sivi blokovi sa natpisom ili prave fotografije salona.
+             Zašto je odbačena: vlasnik je tražio izgled sa slikama za pregled klijentu. Slike NISU salon MAMBA MB
+             i moraju se zameniti pravim pre lansiranja. Alt tekst zato kaže da su privremene.
+             TODO: zameniti pravim fotografijama radova i prostora, isti 4:3 okvir, WebP do 150 KB.
+             loading="lazy" jer su ispod prvog ekrana, width/height rezervišu prostor. -->
+        <div class="mt-8 grid grid-cols-3 gap-3 md:gap-4">
+          <figure>
+            <img src="assets/img/usluge-kosa-stock.webp" alt="Privremena fotografija: frizerka fenira kosu (nije salon MAMBA MB)" width="800" height="600" loading="lazy" class="aspect-square w-full rounded-brand object-cover md:aspect-[4/3]">
+            <figcaption class="mt-2 text-sm text-champagne-muted">Frizer</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/img/usluge-nokti-stock.webp" alt="Privremena fotografija: ruka sa negovanim noktima (nije salon MAMBA MB)" width="800" height="600" loading="lazy" class="aspect-square w-full rounded-brand object-cover md:aspect-[4/3]">
+            <figcaption class="mt-2 text-sm text-champagne-muted">Manikir</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/img/usluge-lice-stock.webp" alt="Privremena fotografija: masaža lica (nije salon MAMBA MB)" width="800" height="600" loading="lazy" class="aspect-square w-full rounded-brand object-cover md:aspect-[4/3]">
+            <figcaption class="mt-2 text-sm text-champagne-muted">Masaže i tretmani</figcaption>
+          </figure>
+        </div>
+
+        <div class="mt-8 grid gap-4 md:grid-cols-2">
+
+          <div class="rounded-brand border border-champagne/20 border-t-2 border-t-gold bg-ink-hover/40 p-6">
+            <h3 class="font-display text-xl font-semibold text-gold">Frizerske usluge</h3>
+            <!-- TODO: cenovnik ne objašnjava šta znače tri cene (verovatno dužina kose). Pitati klijenta i dopisati. -->
+            <ul class="mt-3 text-base text-champagne/90">
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Šišanje</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 – 2.500 – 3.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Feniranje</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">1.000 – 2.500 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Farbanje</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">3.000 – 4.000 – 5.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Uslužno farbanje</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 – 3.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Pramenovi</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">8.000 – 20.000 din</span>
+            </li>
+            </ul>
+          </div>
+          <div class="rounded-brand border border-champagne/20 border-t-2 border-t-gold bg-ink-hover/40 p-6">
+            <h3 class="font-display text-xl font-semibold text-gold">Manikir i pedikir</h3>
+            <!-- Marinin broj sa cenovnika (poslednji red), potvrdio klijent 2026-09-24: 060 54 54 912. -->
+            <p class="mt-2 text-sm text-champagne-muted">Manikir zakazujete kod Marine: <a href="tel:+381605454912" class="cursor-pointer font-semibold text-champagne underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne">060 54 54 912</a></p>
+            <ul class="mt-3 text-base text-champagne/90">
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Estetski manikir baza + lak</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">1.300 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Estetski manikir gel + lak</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">1.800 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Estetski manikir nadogradnja (opcija 1)</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.500 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Estetski manikir nadogradnja (opcija 2)</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">3.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Dodatak crtanje frenča</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">200 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Skidanje gela</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">700 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Pedikir</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">3.000 din</span>
+            </li>
+            </ul>
+          </div>
+          <div class="rounded-brand border border-champagne/20 border-t-2 border-t-gold bg-ink-hover/40 p-6">
+            <h3 class="font-display text-xl font-semibold text-gold">Tretmani lica i tela</h3>
+            <ul class="mt-3 text-base text-champagne/90">
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Higijenski tretman lica</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">5.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Dermapen tretman</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">6.000 – 8.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Hemijski piling</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">4.000 – 6.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Masaža celo telo (1h)</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">4.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Parcijalna masaža (30 min)</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Kavitacija po regiji</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Elektrostimulacija</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 din</span>
+            </li>
+            </ul>
+          </div>
+          <div class="rounded-brand border border-champagne/20 border-t-2 border-t-gold bg-ink-hover/40 p-6">
+            <h3 class="font-display text-xl font-semibold text-gold">Depilacija i epilacija</h3>
+            <ul class="mt-3 text-base text-champagne/90">
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Depilacija nogu</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Depilacija ruku</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">1.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Depilacija prepone</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">1.500 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Depilacija leđa</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Depilacija pazuha</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">1.000 din</span>
+            </li>
+            <li class="flex items-baseline justify-between gap-4 border-b border-champagne/10 py-2 last:border-b-0">
+              <span>Laserska epilacija (po regiji)</span>
+              <span class="whitespace-nowrap font-semibold text-champagne">2.000 – 5.000 din</span>
+            </li>
+            </ul>
+          </div>
+          <!-- Usluge sa prve liste klijenta (imenik) koje nisu na cenovniku. PRETPOSTAVKA:
+               još se rade. TODO: potvrditi sa klijentom, pa dodati cene ili izbaciti. -->
+          <div class="rounded-brand border border-champagne/20 border-t-2 border-t-gold bg-ink-hover/40 p-6 md:col-span-2">
+            <h3 class="font-display text-xl font-semibold text-gold">Ostali tretmani</h3>
+            <p class="mt-2 text-sm text-champagne-muted">Cena se dogovara pozivom.</p>
+            <ul class="mt-3 text-base text-champagne/90 md:columns-3">
+              <li class="py-1">Keratinski tretman kose</li>
+              <li class="py-1">Olaplex tretman kose</li>
+              <li class="py-1">Ruski volumen kose</li>
+              <li class="py-1">Trepavice</li>
+              <li class="py-1">Parafin</li>
+              <li class="py-1">Masaža lica</li>
+              <li class="py-1">Antistres masaža</li>
+              <li class="py-1">Anticelulit masaža</li>
+              <li class="py-1">Relax masaža</li>
+              <li class="py-1">Terapeutska masaža</li>
+              <li class="py-1">Vakum slim tretman</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <p class="mt-8 max-w-md text-lg text-champagne/90">Ne znate koji tretman vam treba? Pozovite, pa ćemo dogovoriti termin.</p>
+        <!-- Na crnoj podlozi crno dugme bi nestalo, pa je ovde obrnuto (šampanj dugme).
+             Utility klase pobeđuju .btn-call jer je on u @layer components. -->
+        <a href="tel:+38162595792" class="btn-call mt-4 inline-flex bg-champagne text-ink hover:bg-cream focus-visible:outline-champagne">
+          <svg class="h-5 w-5" aria-hidden="true"><use href="#i-phone"/></svg>
+          Pozovi i zakaži termin
+        </a>
+        <p class="mt-3 text-sm text-champagne-muted">Poziv na 062 595792.</p>
+
+      </div>
+    </section>
+    <!-- /03. USLUGE -->
+
+    <!-- ============================================
+         04. RECENZIJE
+         Obara prepreku "ne verujem": tuđe reči umesto naših.
+         Tri citata sa punim tekstom, potpis ime + prvo slovo prezimena
+         (brief.md, druga runda, pitanje 7). Emodžiji iz originala su
+         izbačeni, a slova sa kvačicama vraćena tamo gde ih original
+         nema ("pristupačne"), smisao je isti.
+         Ocena i broj recenzija se NE pišu: izvori se ne slažu (brief.md, pitanje 13).
+         TODO: potvrditi gde su recenzije objavljene (Google, imenik ili
+               Facebook) pre nego što se ispod citata doda izvor.
+         ============================================ -->
+    <section class="border-t border-cream-deep bg-cream-deep/40" aria-labelledby="recenzije-naslov">
+      <div data-reveal class="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
+
+        <h2 id="recenzije-naslov" class="font-display text-3xl font-semibold text-ink md:text-4xl">Šta kažu klijenti</h2>
+
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+
+          <figure class="flex flex-col justify-between rounded-brand border border-cream-deep bg-paper p-6">
+            <blockquote class="text-base">
+              Fantastična usluga, vrlo pristupačne cene, za svaku preporuku! Vrlo detaljno rade sve.
+            </blockquote>
+            <figcaption class="mt-4 text-sm font-semibold text-ink-soft">Tanja Č.</figcaption>
+          </figure>
+
+          <figure class="flex flex-col justify-between rounded-brand border border-cream-deep bg-paper p-6">
+            <blockquote class="text-base">
+              Najbolji ... najbolji. Sve na jednom mestu: frizer, masaža, tretmani lica, trepavice, manikir, pedikir, el. stimulacija, depilacija... i još mnogo toga. Vrhunska usluga ... profesionalni, ljubazni.
+            </blockquote>
+            <figcaption class="mt-4 text-sm font-semibold text-ink-soft">Marina B.</figcaption>
+          </figure>
+
+          <figure class="flex flex-col justify-between rounded-brand border border-cream-deep bg-paper p-6">
+            <blockquote class="text-base">
+              Ljubazno osoblje, pristojne cene, nema gužve ali rade na zakazivanje. Na jednom mestu pedikir, manikir i frize.
+            </blockquote>
+            <figcaption class="mt-4 text-sm font-semibold text-ink-soft">Milena T.</figcaption>
+          </figure>
+
+        </div>
+
+      </div>
+    </section>
+    <!-- /04. RECENZIJE -->
+
+    <!-- ============================================
+         05. PRIGOVORI
+         Tri prigovora iz brief.md (pitanje 12): cene, zakazivanje,
+         daleko je, plus jedno pitanje za sve ostalo (Instagram DM,
+         kako piše na cenovniku). Odgovori su samo činjenice koje je
+         klijent dao, bez obećanja koja nisu potvrđena.
+         details/summary: radi bez JS-a i čita ga čitač ekrana.
+         ============================================ -->
+    <section class="border-t border-cream-deep bg-cream" aria-labelledby="prigovori-naslov">
+      <div data-reveal class="mx-auto max-w-3xl px-4 py-12 md:px-8 md:py-16">
+
+        <h2 id="prigovori-naslov" class="font-display text-3xl font-semibold text-ink md:text-4xl">Pitanja pre poziva</h2>
+
+        <div class="mt-6 border-t border-cream-deep">
+        <details class="group border-b border-cream-deep py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-brand text-lg font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+            Koliko košta?
+            <svg class="h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="mt-3 max-w-2xl text-base text-ink-soft">
+            <p>Cene su u cenovniku iznad, po usluzi. Za tretmane koji nisu na cenovniku cenu dobijate pozivom na <a href="tel:+38162595792" class="cursor-pointer font-semibold text-ink underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">062 595792</a>.</p>
+          </div>
+        </details>
+        <details class="group border-b border-cream-deep py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-brand text-lg font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+            Mogu li da dođem bez zakazivanja?
+            <svg class="h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="mt-3 max-w-2xl text-base text-ink-soft">
+            <p>Radi se po dogovoru, pa prvo pozovite i zakažite termin. Zovite utorkom do petkom od 10 do 20h, subotom i nedeljom od 10 do 16h.</p>
+          </div>
+        </details>
+        <details class="group border-b border-cream-deep py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-brand text-lg font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+            Kako se zakazuje manikir?
+            <svg class="h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="mt-3 max-w-2xl text-base text-ink-soft">
+            <p>Manikir zakazujete direktno kod Marine na <a href="tel:+381605454912" class="cursor-pointer font-semibold text-ink underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">060 54 54 912</a>. Sve ostalo zakazujete na 062 595792.</p>
+          </div>
+        </details>
+        <details class="group border-b border-cream-deep py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-brand text-lg font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+            Gde se nalazite?
+            <svg class="h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="mt-3 max-w-2xl text-base text-ink-soft">
+            <p>Stanka Paunovića Veljka 78j, Miljakovac, Beograd. Navigaciju do salona otvarate dugmetom na dnu stranice.</p>
+          </div>
+        </details>
+        <details class="group border-b border-cream-deep py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-brand text-lg font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+            Imam još pitanje.
+            <svg class="h-5 w-5 shrink-0 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="mt-3 max-w-2xl text-base text-ink-soft">
+            <p>Pišite nam na Instagramu, u poruke (DM): <a href="https://www.instagram.com/mamba.mb/" class="cursor-pointer font-semibold text-ink underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink" rel="noopener">@mamba.mb</a>.</p>
+          </div>
+        </details>
+        </div>
+
+      </div>
+    </section>
+    <!-- /05. PRIGOVORI -->
+
+    <!-- ============================================
+         06. LOKACIJA
+         Podsetnik na dnu: poslednji ekran je najčešće mesto sa kog se zove.
+         Dugme navigacije je sporedno (obris), poziv ostaje glavno.
+         Google Maps link je pretraga po adresi jer klijent nije dao link.
+         TODO: proveriti da pin pada na 78j, ako ne, uzeti link sa Google profila.
+         ============================================ -->
+    <section class="bg-ink" aria-labelledby="lokacija-naslov">
+      <div data-reveal class="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
+
+        <h2 id="lokacija-naslov" class="font-display text-3xl font-semibold text-champagne md:text-4xl">Gde smo i kada radimo</h2>
+
+        <div class="mt-8 grid gap-8 md:grid-cols-2">
+
+          <div>
+            <p class="text-lg text-champagne">Stanka Paunovića Veljka 78j</p>
+            <p class="text-base text-champagne-muted">Miljakovac, Beograd</p>
+
+            <dl class="mt-6 grid max-w-sm grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-base">
+              <dt class="text-champagne-muted">Utorak – petak</dt>
+              <dd class="font-semibold text-champagne">10:00 – 20:00</dd>
+              <dt class="text-champagne-muted">Subota i nedelja</dt>
+              <dd class="font-semibold text-champagne">10:00 – 16:00</dd>
+              <dt class="text-champagne-muted">Ponedeljak</dt>
+              <dd class="font-semibold text-champagne">ne radimo</dd>
+            </dl>
+          </div>
+
+          <div class="flex flex-col items-start gap-4">
+            <a href="tel:+38162595792" class="btn-call inline-flex bg-champagne text-ink hover:bg-cream focus-visible:outline-champagne">
+              <svg class="h-5 w-5" aria-hidden="true"><use href="#i-phone"/></svg>
+              Pozovi i zakaži termin
+            </a>
+            <p class="-mt-2 text-sm text-champagne-muted">Poziv na 062 595792.</p>
+
+            <!-- Sporedna akcija: obris umesto punog dugmeta, da ne konkuriše pozivu -->
+            <a href="https://www.google.com/maps/search/?api=1&amp;query=Stanka+Paunovi%C4%87a+Veljka+78j%2C+Beograd" class="inline-flex cursor-pointer items-center gap-2 rounded-brand border border-champagne px-5 py-3 text-base font-semibold text-champagne transition-colors duration-200 hover:bg-champagne hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne" target="_blank" rel="noopener">
+              <svg class="h-5 w-5" aria-hidden="true"><use href="#i-pin"/></svg>
+              Otvori navigaciju do salona
+            </a>
+
+            <!-- Instagram: samo link, bez ugrađenog feed-a. Feed učitava skripte treće strane i probija budžet
+                 performansi (vidi organizacija-koda, ugrađeni sadržaj). Isti obris kao dugme navigacije. -->
+            <a href="https://www.instagram.com/mamba.mb/" class="inline-flex cursor-pointer items-center gap-2 rounded-brand border border-champagne px-5 py-3 text-base font-semibold text-champagne transition-colors duration-200 hover:bg-champagne hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne" target="_blank" rel="noopener">
+              <svg class="h-5 w-5" aria-hidden="true"><use href="#i-instagram"/></svg>
+              Pogledajte radove na Instagramu
+            </a>
+          </div>
+
+        </div>
+
+        <p class="mt-12 border-t border-champagne/20 pt-6 text-sm text-champagne-muted">MAMBA MB, frizersko kozmetički studio</p>
+
+      </div>
+    </section>
+    <!-- /06. LOKACIJA -->
+
+  </main>
+
+  <!-- ============================================
+       07. POZIV TRAKA
+       Fiksna traka samo na mobilnom (brief.md, druga runda, pitanje 3).
+       Isti tekst dugmeta kao svuda. pb sa env() da dugme ne upadne
+       u traku za gestove na novijim telefonima.
+       ============================================ -->
+  <div class="fixed inset-x-0 bottom-0 z-10 border-t border-cream-deep bg-cream px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:hidden">
+    <a href="tel:+38162595792" class="btn-call flex w-full">
+      <svg class="h-5 w-5" aria-hidden="true"><use href="#i-phone"/></svg>
+      Pozovi i zakaži termin
+    </a>
+  </div>
+  <!-- /07. POZIV TRAKA -->
+
+</body>
+</html>
