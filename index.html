@@ -20,9 +20,7 @@
   pri skrolu u 03-06). Brojevi sekcija su isti u oba fajla.
 
   TODO: sekcije se rade jedna po jedna, posle odobrenja prethodne.
-  TODO: JSON-LD (HairSalon/BeautySalon), canonical i og:image kad
-        se zna domen. Ime u šemi mora biti isto kao na Google profilu.
-  TODO: 404 stranica, radi se na kraju.
+  TODO: canonical, og:image i "url" u JSON-LD kad se zna domen.
   Preskočeno namerno: greška i uspeh forme (nema forme), pravni
   minimum (nema forme, analitike ni ugrađenog sadržaja).
   ============================================================
@@ -42,6 +40,51 @@
        Ostale tezine i latin-ext se učitavaju kad zatrebaju. -->
   <link rel="preload" href="assets/fonts/lora-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- JSON-LD: podaci o salonu za Google. Ime isto kao na Google profilu (brief.md, druga runda, pitanje 1),
+       telefon, adresa i radno vreme kao na cenovniku i profilu. Namerno BEZ aggregateRating: izvori ocene se
+       ne slažu i ne izmišljamo je (brief.md, pitanje 13). Radno vreme je i u main.js (WORKING_HOURS) i u 02/06.
+       TODO: kad se zna domen dodati "url", "image" (apsolutna adresa logoa) i canonical link u head. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BeautySalon",
+  "name": "Frizersko kozmetički studio MAMBA MB",
+  "alternateName": "MAMBA MB Beauty concept",
+  "telephone": "+38162595792",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Stanka Paunovića Veljka 78j",
+    "addressLocality": "Beograd",
+    "addressRegion": "Miljakovac",
+    "addressCountry": "RS"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "10:00",
+      "closes": "20:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "10:00",
+      "closes": "16:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/mamba.mb/"
+  ]
+}
+  </script>
   <link rel="stylesheet" href="assets/css/style.css">
   <!-- RAZUMI: zašto se klasa "js" dodaje inline, pre učitavanja stilova sekcija? Bez nje, ko ima isključen JS ne bi video sekcije. -->
   <script>document.documentElement.classList.add('js')</script>

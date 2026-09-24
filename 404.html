@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  404.html
+  Stranica koju server prikaže kad adresa ne postoji. Isti izgled kao
+  sajt, jasna poruka i dugme nazad na početnu (obavezno stanje 1).
+
+  SADRŽAJ
+  01. HEADER        Logo
+  02. PORUKA        Poruka i dugme nazad
+  ============================================================
+-->
+<html lang="sr-Latn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stranica ne postoji | MAMBA MB</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0b0a09">
+  <!-- 404 se prikazuje na bilo kojoj putanji (npr. /nesto/nema), pa relativne adrese stilova i slika
+       ne rade. <base> ih vraća na koren sajta. Na GitHub Pages sajt živi u /mamba-mb/, na Netlify-ju
+       i na pravom domenu u /. Kad se GitHub Pages ugasi, ovo se svodi na <base href="/">. -->
+  <script>document.write('<base href="' + (location.hostname.endsWith('github.io') ? '/mamba-mb/' : '/') + '">')</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="flex min-h-screen flex-col bg-cream font-sans text-base text-ink antialiased">
+
+  <!-- ============================================
+       01. HEADER
+       ============================================ -->
+  <header class="bg-ink">
+    <div class="mx-auto flex max-w-6xl items-center px-4 py-3 md:px-8">
+      <a href="./" class="cursor-pointer rounded-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne">
+        <img src="assets/img/logo.webp" alt="MAMBA MB, salon lepote, Beauty concept" width="221" height="189" class="h-20 w-auto">
+      </a>
+    </div>
+  </header>
+  <!-- /01. HEADER -->
+
+  <!-- ============================================
+       02. PORUKA
+       ============================================ -->
+  <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col items-start justify-center px-4 py-16 md:px-8">
+    <p class="text-sm font-semibold text-ink-soft">Greška 404</p>
+    <h1 class="mt-2 font-display text-4xl font-semibold leading-tight text-ink md:text-5xl">Ove stranice nema</h1>
+    <p class="mt-4 max-w-md text-lg text-ink-soft">Adresa je pogrešna ili je stranica uklonjena. Sve što nudimo je na početnoj.</p>
+    <a href="./" class="btn-call mt-6 inline-flex">Vrati me na početnu</a>
+  </main>
+  <!-- /02. PORUKA -->
+
+</body>
+</html>

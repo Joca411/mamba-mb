@@ -18,6 +18,7 @@
 /* RAZUMI: kako Tailwind zna koje klase da ubaci u style.css, ako ne skenira ceo projekat? */
 @import "tailwindcss" source(none);
 @source "../index.html";
+@source "../404.html";
 /* Klase za lampicu statusa se upisuju iz JS-a (renderOpenStatus), pa ga Tailwind mora skenirati */
 @source "../assets/js/main.js";
 
